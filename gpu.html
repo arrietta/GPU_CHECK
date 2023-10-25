@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GPU Data</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="logo.png" type="image/png">
+  <style>
+    #game_info{
+      display: flex;
+      justify-content: space-between;
+      margin-top: 4%;
+      margin-left: 2%;
+      margin-right: 15%;
+    }
+    #game_name{
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg " >
+    <a class="navbar-brand" href="index.html"><img src="banner.png" height="50rem" alt=""></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="cpu.html">CPU</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="gpu.html">GPU</a>
+        </li>
+      </ul>
+    </div>
+</nav>
+  <div class="container mt-4 mnt">
+    <h1>GPU Information</h1>
+    <div class="row">
+      <div class="col">
+        <label for="gpu_select1">Select a GPU 1:</label>
+        <select id="gpu_select1" class="form-control" onchange="displayData(1)">
+          <option value="">-- Select a GPU --</option>
+        </select>
+      </div>
+      <div class="col">
+        <label for="gpu_select2">Select a GPU 2:</label>
+        <select id="gpu_select2" class="form-control" onchange="displayData(2)">
+          <option value="">-- Select a GPU --</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col">
+        <h2 id="gpu_name1"></h2>
+        <div id="gpus_data1" style="display: none;"></div>
+        <div id="gpu_data1" style="display: none;"></div>
+      </div>
+      <div class="col">
+        <h2 id="gpu_name2"></h2>
+        <div id="gpus_data2" style="display: none;"></div>
+        <div id="gpu_data2" style="display: none;"></div>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col">
+        <label for="game_select">Select a Game:</label>
+        <select id="game_select" class="form-control" onchange="displayGame()">
+          <option value="">-- Select a Game --</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col">
+        <h3 id="game_name"></h3>
+        <div id="game_info" style="display: none;"></div>
+      </div>
+    </div>
+  </div>
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; Email: <a href="#">jakskarimov@gmail.com </a>| Instagram : <a href="https://www.instagram.com/_zhans__k/" class="footer-link">@_zhans__k </a> </p>
+    </div>
+  </footer>
+  <script>
+    let gpuData;
+    let gpuJsonData;
+
+    // Fetch the data from the JSON files
+    fetch('gpus.json')
+      .then(response => response.json())
+      .then(data => {
+        gpuData = data;
+        populateSelectBox(1);
+        populateSelectBox(2);
+      });
+
+    fetch('gpu.json')
+      .then(response => response.json())
+      .then(data => {
+        gpuJsonData = data;
+      });
+
+    function populateSelectBox(index) {
+      const selectBox = document.getElementById(`gpu_select${index}`);
+
+      gpuData.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.Name;
+        option.text = item.Name;
+        selectBox.appendChild(option);
+      });
+    }
+
+    function displayData(index) {
+      const selectBox = document.getElementById(`gpu_select${index}`);
+      const selectedValue = selectBox.value;
+      const gpuNameElement = document.getElementById(`gpu_name${index}`);
+      const gpusDataElement = document.getElementById(`gpus_data${index}`);
+      const gpuDataElement = document.getElementById(`gpu_data${index}`);
+
+      gpuNameElement.textContent = '';
+      gpusDataElement.innerHTML = '';
+      gpuDataElement.innerHTML = '';
+      game_name.textContent = '';
+      game_info.innerHTML = '';
+      game_select.innerHTML = '<option value="">-- Select a Game --</option>'; // Clear game select box
+
+      if (selectedValue !== '') {
+        const gpuItem = gpuData.find(item => item.Name === selectedValue);
+        const gpuJsonItem = gpuJsonData.find(item => item.Name === selectedValue);
+
+        gpuNameElement.textContent = gpuItem.Name;
+        gpusDataElement.innerHTML = `
+          <p>Price: ${gpuItem.Price.Value}</p>
+          <p>Year: ${gpuItem.Year.Value}</p>
+          <p>Maximum Recorded Temperature: ${gpuItem["Maximum Recorded Temperature"].Value}</p>
+          <p>Max Fan Noise: ${gpuItem["Max Fan Noise"].Value}</p>
+          <p>Recommended Power Supply: ${gpuItem["Recommended Power Supply"].Value}</p>
+          <p>Benchmark CPU: ${gpuItem["Benchmark CPU"].Value}</p>
+          <p>CPU Impact on FPS: ${gpuItem["CPU Impact on FPS"].Value}</p>
+          <p>CPU Impact on FPS %: ${gpuItem["CPU Impact on FPS %"].Value}</p>
+          <p>Benchmark Quality Settings: ${gpuItem["Benchmark Quality Settings"].Value}</p>
+          <p>Average 1080p Performance: ${gpuItem["Average 1080p Performance"].Value}</p>
+          <p>Average 1440p Performance: ${gpuItem["Average 1440p Performance"].Value}</p>
+          <p>(Ultrawide) Average 1440p Performance: ${gpuItem["(Ultrawide) Average 1440p Performance"].Value}</p>
+          <p>Average 4K Performance: ${gpuItem["Average 4K Performance"].Value}</p>
+          <p>Memory: ${gpuItem.Memory.Value}</p>
+          <p>1080p Cost Per Frame: ${gpuItem["1080p Cost Per Frame"].Value}</p>
+          <p>1440p Cost Per Frame: ${gpuItem["1440p Cost Per Frame"].Value}</p>
+          <p>(Ultrawide) 1440p Cost Per Frame: ${gpuItem["(Ultrawide) 1440p Cost Per Frame"].Value}</p>
+          <p>4K Cost Per Frame: ${gpuItem["4K Cost Per Frame"].Value}</p>
+          <p>Series: ${gpuItem.Series.Value}</p>
+          <p>Variant: ${gpuItem.Variant.Value}</p>
+          <p>Overall Combination Score: ${gpuItem["Overall Combination Score"].Value}</p>
+        `;
+        gpuDataElement.innerHTML = `
+          <p>Manufacturer: ${gpuJsonItem.manufacturer}</p>
+          <p>Release Year: ${gpuJsonItem.releaseYear}</p>
+          <p>Memory Size: ${gpuJsonItem.memSize} GB</p>
+          <p>Memory Bus Width: ${gpuJsonItem.memBusWidth}</p>
+          <p>GPU Clock: ${gpuJsonItem.gpuClock}</p>
+          <p>Memory Clock: ${gpuJsonItem.memClock}</p>
+          <p>Unified Shader: ${gpuJsonItem.unifiedShader}</p>
+          <p>TMU: ${gpuJsonItem.tmu}</p>
+          <p>ROP: ${gpuJsonItem.rop}</p>
+          <p>IGP: ${gpuJsonItem.igp}</p>
+          <p>Bus: ${gpuJsonItem.bus}</p>
+          <p>Memory Type: ${gpuJsonItem.memType}</p>
+          <p>GPU Chip: ${gpuJsonItem.gpuChip}</p>
+        `;
+
+        gpusDataElement.style.display = 'block';
+        gpuDataElement.style.display = 'block';
+
+        // Update the game select box
+        const gameSelectBox = document.getElementById('game_select');
+        gameSelectBox.innerHTML = '<option value="">-- Select a Game --</option>';
+
+        if (gpuItem.Settings && gpuItem.Settings.ultra && gpuItem.Settings.ultra.Resolution && gpuItem.Settings.ultra.Resolution['1920x1080'] && gpuItem.Settings.ultra.Resolution['1920x1080'].Games) {
+          const games = gpuItem.Settings.ultra.Resolution['1920x1080'].Games;
+
+          games.forEach(game => {
+            const option = document.createElement('option');
+            option.value = game.Game_Name;
+            option.text = game.Game_Name;
+            gameSelectBox.appendChild(option);
+          });
+        }
+      }
+    }
+
+    function displayGame() {
+    const selectBox = document.getElementById('game_select');
+    const selectedValue = selectBox.value;
+    const gameNameElement = document.getElementById('game_name');
+    const gameDataElement = document.getElementById('game_info');
+
+    gameNameElement.textContent = '';
+    gameDataElement.innerHTML = '';
+
+    if (selectedValue !== '') {
+      const selectBox1 = document.getElementById('gpu_select1');
+      const selectedValue1 = selectBox1.value;
+      const gpuItem1 = gpuData.find(item => item.Name === selectedValue1);
+
+      const selectBox2 = document.getElementById('gpu_select2');
+      const selectedValue2 = selectBox2.value;
+      const gpuItem2 = gpuData.find(item => item.Name === selectedValue2);
+
+      let gameData1, gameData2;
+
+      if (gpuItem1 && gpuItem1.Settings && gpuItem1.Settings.ultra && gpuItem1.Settings.ultra.Resolution && gpuItem1.Settings.ultra.Resolution['1920x1080'] && gpuItem1.Settings.ultra.Resolution['1920x1080'].Games) {
+        gameData1 = gpuItem1.Settings.ultra.Resolution['1920x1080'].Games.find(game => game.Game_Name === selectedValue);
+      }
+
+      if (gpuItem2 && gpuItem2.Settings && gpuItem2.Settings.ultra && gpuItem2.Settings.ultra.Resolution && gpuItem2.Settings.ultra.Resolution['1920x1080'] && gpuItem2.Settings.ultra.Resolution['1920x1080'].Games) {
+        gameData2 = gpuItem2.Settings.ultra.Resolution['1920x1080'].Games.find(game => game.Game_Name === selectedValue);
+      }
+
+      if (gameData1) {
+        gameNameElement.textContent = gameData1.Game_Name;
+        gameDataElement.innerHTML += `
+          
+          <div>
+          <p>${gpuItem1.Name}</p>
+          <p>Release Date: ${gameData1.Release_Date}</p>
+          <p>Minimum FPS: ${gameData1.Min_FPS}</p>
+          <p>Average FPS: ${gameData1.Avg_FPS}</p>
+          <hr></div>
+        `;
+      }
+
+      if (gameData2) {
+        gameNameElement.textContent = gameData2.Game_Name;
+        gameDataElement.innerHTML += `
+        <div>
+          <p>${gpuItem2.Name}</p>
+          <p>Release Date: ${gameData2.Release_Date}</p>
+          <p>Minimum FPS: ${gameData2.Min_FPS}</p>
+          <p>Average FPS: ${gameData2.Avg_FPS}</p></div>
+        `;
+      }
+
+      gameDataElement.style.display = 'flex';
+    }
+  }
+
+  </script>
+</body>
+</html>

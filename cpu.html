@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">  
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPU Information</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="logo.png" type="image/png">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg " >
+        <a class="navbar-brand" href="index.html"><img src="banner.png" height="50rem" alt=""></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="cpu.html">CPU</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="gpu.html">GPU</a>
+            </li>
+          </ul>
+        </div>
+    </nav>
+    
+
+    <div class="container mt-4 mnt">
+        <h1>CPU Information</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="cpu-select">Select CPU:</label>
+                    <select id="cpu-select" class="form-control">
+                        <option value="">-- Select CPU --</option>
+                    </select>
+                </div>
+                
+                <div id="cpu-info"></div>
+            </div>
+        
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="cpu-select-2">Select CPU:</label>
+                    <select id="cpu-select-2" class="form-control">
+                        <option value="">-- Select CPU --</option>
+                    </select>
+                </div>
+                
+                <div id="cpu-info-2"></div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="container">
+          <p>&copy; Email: <a href="#">jakskarimov@gmail.com </a>| Instagram : <a href="https://www.instagram.com/_zhans__k/" class="footer-link">@_zhans__k </a> </p>
+        </div>
+      </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script>
+        // Declare the 'data' variable globally
+        var data;
+
+        // Function to load JSON data
+        function loadJSON(url, callback) {
+            fetch(url)
+                .then(response => response.json())
+                .then(jsonData => {
+                    data = jsonData; // Store the JSON data globally
+                    callback(data);
+                })
+                .catch(error => console.error(error));
+        }
+
+        // Function to populate the CPU select boxes
+        function populateCPUSelect(data) {
+            var cpuSelect = document.getElementById("cpu-select");
+            var cpuSelect2 = document.getElementById("cpu-select-2");
+
+            for (var i = 0; i < data.length; i++) {
+                var option = document.createElement("option");
+                option.value = i;
+                option.text = data[i].Product;
+                cpuSelect.appendChild(option);
+
+                var option2 = document.createElement("option");
+                option2.value = i;
+                option2.text = data[i].Product;
+                cpuSelect2.appendChild(option2);
+            }
+        }
+
+        // Function to display CPU information
+        function displayCPUInfo(selectedCPU, cpuInfoElement) {
+            var cpuInfo = document.getElementById(cpuInfoElement);
+            cpuInfo.innerHTML = ""; // Clear previous info
+
+            var cpu = data[selectedCPU];
+            var cpuInfoHTML =
+                "<h4>" + cpu.Product + "</h4>" +
+                "<p><strong>Status:</strong> " + cpu.Status + "</p>" +
+                "<p><strong>Release Date:</strong> " + cpu["Release Date"] + "</p>" +
+                "<p><strong>Cores:</strong> " + cpu.Cores + "</p>" +
+                "<p><strong>Threads:</strong> " + cpu.Threads + "</p>" +
+                "<p><strong>Lithography (nm):</strong> " + cpu["Lithography(nm)"] + "</p>" +
+                "<p><strong>Max. Turbo Freq. (GHz):</strong> " + cpu["Max. Turbo Freq.(GHz)"] + "</p>" +
+                "<p><strong>Base Freq. (GHz):</strong> " + cpu["Base Freq.(GHz)"] + "</p>" +
+                "<p><strong>TDP (W):</strong> " + cpu["TDP(W)"] + "</p>" +
+                "<p><strong>Cache (MB):</strong> " + cpu["Cache(MB)"] + "</p>" +
+                "<p><strong>Cache Info:</strong> " + cpu["Cache Info"] + "</p>" +
+                "<p><strong>Integrated Graphics:</strong> " + cpu["Integrated Graphics"] + "</p>";
+
+            cpuInfo.innerHTML = cpuInfoHTML;
+        }
+
+        // Load CPU data
+        loadJSON("cpu.json", function(data) {
+            populateCPUSelect(data);
+        });
+
+        // Event listener for CPU selection
+        document.getElementById("cpu-select").addEventListener("change", function() {
+            var selectedCPU = this.value;
+            displayCPUInfo(selectedCPU, "cpu-info");
+        });
+
+        // Event listener for second CPU selection
+        document.getElementById("cpu-select-2").addEventListener("change", function() {
+            var selectedCPU = this.value;
+            displayCPUInfo(selectedCPU, "cpu-info-2");
+        });
+    </script>
+</body>
+</html>
